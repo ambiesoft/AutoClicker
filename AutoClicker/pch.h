@@ -11,9 +11,12 @@
 #include "framework.h"
 
 #include <string>
+#include <sstream>
 
 #include "../../lsMisc/stdosd/stdosd.h"
 #include "../../lsMisc/stdosd/blockedbool.h"
+#include "../../lsMisc/SaveWindowLocation.h"
+#include "../../lsMisc/OpenCommon.h"
 
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
 

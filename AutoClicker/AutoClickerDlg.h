@@ -9,6 +9,12 @@
 class CAutoClickerDlg : public CDialogEx
 {
 	bool m_bGettingPosition = false;
+	Ambiesoft::HashIniHandle initialIni_;
+	HANDLE hClicker_ = nullptr;
+
+	void ToggleWorker(bool bStart);
+	void ToggleWorker();
+
 // Construction
 public:
 	CAutoClickerDlg(CWnd* pParent = nullptr);	// standard constructor
@@ -40,4 +46,7 @@ public:
 	CString m_strEditY;
 	afx_msg void OnBnClickedButtonStartClicking();
 	afx_msg void OnDestroy();
+	afx_msg LRESULT OnWokerReady(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnWokerFinished(WPARAM wParam, LPARAM lParam);
+	CButton m_btnStart;
 };

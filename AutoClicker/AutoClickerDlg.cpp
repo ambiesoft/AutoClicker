@@ -5,6 +5,8 @@
 #include "pch.h"
 #include "resource.h"
 #include "framework.h"
+#include "../common/common.h"
+
 #include "AutoClicker.h"
 #include "AutoClickerDlg.h"
 #include "afxdialogex.h"
@@ -62,11 +64,11 @@ CAutoClickerDlg::CAutoClickerDlg(CWnd* pParent /*=nullptr*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	try
 	{
-		Profile::CHashIni ini(Profile::ReadAll(std::wstring((LPCWSTR)theApp.GetIniFile()), true));
+		initialIni_ = Profile::ReadAll(std::wstring((LPCWSTR)theApp.GetIniFile()), true);
 		int x, y;
 		bool ok = true;
-		ok &= Profile::GetInt(SECTION_OPTION, KEY_MOUSE_X, 0, x, ini);
-		ok &= Profile::GetInt(SECTION_OPTION, KEY_MOUSE_Y, 0, y, ini);
+		ok &= Profile::GetInt(SECTION_OPTION, KEY_MOUSE_X, 0, x, initialIni_);
+		ok &= Profile::GetInt(SECTION_OPTION, KEY_MOUSE_Y, 0, y, initialIni_);
 		if (!ok)
 		{
 			AfxMessageBox(I18N(L"Failed to read ini file"));
@@ -87,6 +89,7 @@ void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Text(pDX, IDC_EDIT_X, m_strEditX);
 	DDX_Text(pDX, IDC_EDIT_Y, m_strEditY);
+	DDX_Control(pDX, IDC_BUTTON_START_CLICKING, m_btnStart);
 }
 
 BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
@@ -97,6 +100,8 @@ BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
 	ON_WM_KEYDOWN()
 	ON_BN_CLICKED(IDC_BUTTON_START_CLICKING, &CAutoClickerDlg::OnBnClickedButtonStartClicking)
 	ON_WM_DESTROY()
+	ON_MESSAGE(WM_APP_WORKERREADY, &CAutoClickerDlg::OnWokerReady)
+	ON_MESSAGE(WM_APP_WORKERFINISHED, &CAutoClickerDlg::OnWokerFinished)
 END_MESSAGE_MAP()
 
 
@@ -131,7 +136,8 @@ BOOL CAutoClickerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-
+	LoadWindowLocation(*this, initialIni_);
+	SetWindowText(AfxGetAppName());
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -231,43 +237,7 @@ BOOL CAutoClickerDlg::PreTranslateMessage(MSG* pMsg)
 
 void CAutoClickerDlg::OnBnClickedButtonStartClicking()
 {
-	UpdateData();
-
-	POINT targetPos;
-	targetPos.x = StrToInt(m_strEditX);
-	targetPos.y = StrToInt(m_strEditY);
-
-	POINT origPos;
-
-	int count = 50;
-	for (int i = 0; i < count; ++i)
-	{
-		HWND hActive = ::GetForegroundWindow();
-		if (!GetCursorPos(&origPos))
-		{
-			AfxMessageBox(I18N(L"Failed to get mouse position"));
-			return;
-		}
-
-		if (!SetCursorPos(targetPos.x, targetPos.y))
-		{
-			AfxMessageBox(I18N(L"Failed to set cursor pos"));
-			return;
-		}
-
-		mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-		// Sleep(100);
-		mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-
-		if (!SetCursorPos(origPos.x, origPos.y))
-		{
-			AfxMessageBox(I18N(L"Failed to set cursor pos"));
-			return;
-		}
-		::SetForegroundWindow(hActive);
-		::SetActiveWindow(hActive);
-		Sleep(3000);
-	}
+	ToggleWorker();
 }
 
 
@@ -281,10 +251,77 @@ void CAutoClickerDlg::OnDestroy()
 	bool ok = true;
 	ok &= Profile::WriteInt(SECTION_OPTION, KEY_MOUSE_X, x, ini);
 	ok &= Profile::WriteInt(SECTION_OPTION, KEY_MOUSE_Y, y, ini);
+	ok &= SaveWindowLocation(*this, ini);
 	if (!ok || !Profile::WriteAll(ini,std::wstring( (LPCWSTR)theApp.GetIniFile())))
 	{
 		AfxMessageBox(I18N(L"Failed to write to ini file"));
 	}
 
 	CDialogEx::OnDestroy();
+}
+
+LRESULT CAutoClickerDlg::OnWokerReady(WPARAM wParam, LPARAM lParam)
+{
+	return 0;
+}
+
+void CAutoClickerDlg::ToggleWorker(bool bStart)
+{
+	if(bStart)
+	{
+		UpdateData();
+
+		POINT targetPos;
+		targetPos.x = StrToInt(m_strEditX);
+		targetPos.y = StrToInt(m_strEditY);
+
+		std::wstring app = stdCombinePath(
+			stdGetParentDirectory(stdGetModuleFileName()),
+			WORKER_EXE_NAME);
+		std::wstringstream arg;
+		arg << L"-p " << GetCurrentProcessId() <<
+			L" -w " << (ULONGLONG)m_hWnd <<
+			L" -x " << targetPos.x <<
+			L" -y " << targetPos.y;
+		if (!OpenCommon(*this,
+			app.c_str(),
+			arg.str().c_str(),
+			nullptr, // dir
+			&hClicker_))
+		{
+			AfxMessageBox(I18N(L"Failed to create worker process"));
+			return;
+		}
+
+		m_btnStart.SetWindowText(L"Stop");
+		SetWindowText(stdFormat(L"%s | %s", I18N(L"CLICKING NOW"), AfxGetAppName()).c_str());
+	}
+	else
+	{
+		if (hClicker_)
+		{
+			TerminateProcess(hClicker_, -1);
+			CloseHandle(hClicker_);
+			hClicker_ = nullptr;
+		}
+		m_btnStart.SetWindowText(L"&Start");
+		SetWindowText(AfxGetAppName());
+	}
+}
+void CAutoClickerDlg::ToggleWorker()
+{
+	ToggleWorker(hClicker_ == nullptr);
+	return;
+}
+
+
+LRESULT CAutoClickerDlg::OnWokerFinished(WPARAM wParam, LPARAM lParam)
+{
+	if (WAIT_OBJECT_0 == WaitForSingleObject(hClicker_, 10000))
+	{
+		CloseHandle(hClicker_);
+		hClicker_ = nullptr;
+	}
+	ToggleWorker(false);
+	return 0;
 }
