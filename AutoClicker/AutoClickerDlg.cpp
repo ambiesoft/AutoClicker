@@ -90,6 +90,7 @@ void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_X, m_strEditX);
 	DDX_Text(pDX, IDC_EDIT_Y, m_strEditY);
 	DDX_Control(pDX, IDC_BUTTON_START_CLICKING, m_btnStart);
+	DDX_Control(pDX, IDC_EDIT_LOG, m_edtLog);
 }
 
 BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
@@ -102,6 +103,8 @@ BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_MESSAGE(WM_APP_WORKERREADY, &CAutoClickerDlg::OnWokerReady)
 	ON_MESSAGE(WM_APP_WORKERFINISHED, &CAutoClickerDlg::OnWokerFinished)
+	ON_MESSAGE(WM_APP_WORKERERROR, &CAutoClickerDlg::OnWokerError)
+	ON_MESSAGE(WM_APP_WORKERCLICKED, &CAutoClickerDlg::OnWokerClicked)
 END_MESSAGE_MAP()
 
 
@@ -295,6 +298,8 @@ void CAutoClickerDlg::ToggleWorker(bool bStart)
 
 		m_btnStart.SetWindowText(L"Stop");
 		SetWindowText(stdFormat(L"%s | %s", I18N(L"CLICKING NOW"), AfxGetAppName()).c_str());
+		m_edtLog.SetWindowText(L"");
+		AppendLog(I18N(L"Started"));
 	}
 	else
 	{
@@ -306,6 +311,7 @@ void CAutoClickerDlg::ToggleWorker(bool bStart)
 		}
 		m_btnStart.SetWindowText(L"&Start");
 		SetWindowText(AfxGetAppName());
+		AppendLog(I18N(L"Ended"));
 	}
 }
 void CAutoClickerDlg::ToggleWorker()
@@ -323,5 +329,56 @@ LRESULT CAutoClickerDlg::OnWokerFinished(WPARAM wParam, LPARAM lParam)
 		hClicker_ = nullptr;
 	}
 	ToggleWorker(false);
+	AppendLog(I18N(L"Finished"));
+	return 0;
+}
+
+void CAutoClickerDlg::AppendLog(const wchar_t* pMessage)
+{
+
+	if (!pMessage || pMessage[0] == 0)
+		return;
+
+	CString strLogLine;
+	CTime time = CTime::GetCurrentTime();
+
+	int nLength = m_edtLog.GetWindowTextLength();
+	strLogLine.Format(_T("%s%s %s"),
+		nLength==0 ? L"": L"\r\n",
+		time.Format(_T("%H:%M:%S")), pMessage);
+	
+
+	// put the selection at the end of text
+	m_edtLog.SetSel(nLength, nLength);
+
+	// replace the selection
+	m_edtLog.ReplaceSel(strLogLine);
+}
+
+LRESULT CAutoClickerDlg::OnWokerClicked(WPARAM wParam, LPARAM lParam)
+{
+	AppendLog( I18N(L"Clicked"));
+	return 0;
+}
+LRESULT CAutoClickerDlg::OnWokerError(WPARAM wParam, LPARAM lParam)
+{
+	CString strLogLine;
+	switch(wParam)
+	{
+	case WORKERERROR_LBUTTONPRESSED:
+		strLogLine = I18N(L"Cancel clicking because LButton is pressed");
+		break;
+	case WORKERERROR_GETCURSORPOS:
+		strLogLine = I18N(L"Failed to get mouse position");
+		break;
+	case WORKERERROR_SETCURSORPOS:
+		strLogLine = I18N(L"failed to set mouse position");
+		break;
+	default:
+		strLogLine = I18N(L"Unknown Error");
+		break;
+	}
+
+	AppendLog(strLogLine);
 	return 0;
 }

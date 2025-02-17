@@ -14,7 +14,7 @@ class CAutoClickerDlg : public CDialogEx
 
 	void ToggleWorker(bool bStart);
 	void ToggleWorker();
-
+	void AppendLog(const wchar_t* pMessage);
 // Construction
 public:
 	CAutoClickerDlg(CWnd* pParent = nullptr);	// standard constructor
@@ -48,5 +48,8 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnWokerReady(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnWokerFinished(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnWokerError(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnWokerClicked(WPARAM wParam, LPARAM lParam);
 	CButton m_btnStart;
+	CEdit m_edtLog;
 };

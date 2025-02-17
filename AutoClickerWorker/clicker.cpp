@@ -29,13 +29,17 @@ void clickerMain(ClickerData* data)
 
 	//HDESK hDesk = OpenInputDesktop(0, FALSE, 0);
 	//SetThreadDesktop(hDesk);
-
+	constexpr DWORD INTERVAL_ERROR = 500;
+	constexpr DWORD INTERVAL_LOOP = 3000;
+	constexpr DWORD INTERVAL_MOUSE = 10;
 	int count = 50;
 #ifdef _DEBUG
 	wchar_t szT[500];
 #endif
 	for (int i = 0; i < count; ++i)
 	{
+		Sleep(INTERVAL_LOOP);
+
 #ifdef _DEBUG
 		HWND hActive = ::GetForegroundWindow();
 		GetWindowText(hActive, szT, _countof(szT));
@@ -44,33 +48,36 @@ void clickerMain(ClickerData* data)
 		if (GetAsyncKeyState(VK_LBUTTON) < 0)
 		{
 			DTRACE(L"LBUTTON is pressed");
+			PostMessage(data->hParentWnd_, WM_APP_WORKERERROR, WORKERERROR_LBUTTONPRESSED, 0);
 			--i;
 			continue;
 		}
 
 		if (!GetCursorPos(&origPos))
 		{
-			ErrorTerminate(I18N(L"Failed to get mouse position"));
+			PostMessage(data->hParentWnd_, WM_APP_WORKERERROR, WORKERERROR_GETCURSORPOS, 0);
+			continue;
 		}
 
 		if (!SetCursorPos(targetPos.x, targetPos.y))
 		{
-			ErrorTerminate(I18N(L"Failed to set cursor pos"));
+			PostMessage(data->hParentWnd_, WM_APP_WORKERERROR, WORKERERROR_SETCURSORPOS, 0);
+			continue;
 		}
 
 		mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-		// Sleep(100);
+		Sleep(INTERVAL_MOUSE);
 		mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
 
+		PostMessage(data->hParentWnd_, WM_APP_WORKERCLICKED, 0, 0);
 
 		if (!SetCursorPos(origPos.x, origPos.y))
 		{
-			ErrorTerminate(I18N(L"Failed to set cursor pos"));
+			PostMessage(data->hParentWnd_, WM_APP_WORKERERROR, WORKERERROR_SETCURSORPOS, 0);
 		}
 #ifdef _DEBUG
 		BringWinTop(hActive);
 #endif
-		Sleep(3000);
 	}
 	PostMessage(data->hParentWnd_, WM_APP_WORKERFINISHED, 0, 0);
 	TerminateProcess(GetCurrentProcess(), 0);
