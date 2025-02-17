@@ -41,6 +41,13 @@ void clickerMain(ClickerData* data)
 		GetWindowText(hActive, szT, _countof(szT));
 		DTRACE(szT);
 #endif
+		if (GetAsyncKeyState(VK_LBUTTON) < 0)
+		{
+			DTRACE(L"LBUTTON is pressed");
+			--i;
+			continue;
+		}
+
 		if (!GetCursorPos(&origPos))
 		{
 			ErrorTerminate(I18N(L"Failed to get mouse position"));
