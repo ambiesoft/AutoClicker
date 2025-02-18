@@ -31,12 +31,14 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
+	CBrush m_brBkgnd;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedButtonGetPosition();
@@ -52,4 +54,5 @@ public:
 	afx_msg LRESULT OnWokerClicked(WPARAM wParam, LPARAM lParam);
 	CButton m_btnStart;
 	CEdit m_edtLog;
+	CString m_strGetPositionMessage;
 };

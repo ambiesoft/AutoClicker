@@ -1,4 +1,4 @@
-
+﻿
 // AutoClickerDlg.cpp : implementation file
 //
 
@@ -10,7 +10,7 @@
 #include "AutoClicker.h"
 #include "AutoClickerDlg.h"
 #include "afxdialogex.h"
-
+#include "AboutDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,47 +19,13 @@
 using namespace Ambiesoft;
 using namespace Ambiesoft::stdosd;
 
-// CAboutDlg dialog used for App About
-
-class CAboutDlg : public CDialogEx
-{
-public:
-	CAboutDlg();
-
-// Dialog Data
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ABOUTBOX };
-#endif
-
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-
-// Implementation
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
-{
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-END_MESSAGE_MAP()
-
-
 // CAutoClickerDlg dialog
-
-
 
 CAutoClickerDlg::CAutoClickerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_AUTOCLICKER_DIALOG, pParent)
 	, m_strEditX(_T(""))
 	, m_strEditY(_T(""))
+	, m_strGetPositionMessage(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	try
@@ -81,7 +47,7 @@ CAutoClickerDlg::CAutoClickerDlg(CWnd* pParent /*=nullptr*/)
 	{
 
 	}
-
+	m_brBkgnd.CreateSolidBrush(RGB(145, 70, 42));
 }
 
 void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
@@ -91,6 +57,7 @@ void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_Y, m_strEditY);
 	DDX_Control(pDX, IDC_BUTTON_START_CLICKING, m_btnStart);
 	DDX_Control(pDX, IDC_EDIT_LOG, m_edtLog);
+	DDX_Text(pDX, IDC_STATIC_GETPOSITION_MESSAGE, m_strGetPositionMessage);
 }
 
 BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
@@ -105,6 +72,7 @@ BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
 	ON_MESSAGE(WM_APP_WORKERFINISHED, &CAutoClickerDlg::OnWokerFinished)
 	ON_MESSAGE(WM_APP_WORKERERROR, &CAutoClickerDlg::OnWokerError)
 	ON_MESSAGE(WM_APP_WORKERCLICKED, &CAutoClickerDlg::OnWokerClicked)
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -198,6 +166,9 @@ HCURSOR CAutoClickerDlg::OnQueryDragIcon()
 void CAutoClickerDlg::OnBnClickedButtonGetPosition()
 {
 	m_bGettingPosition = true;
+	
+	m_strGetPositionMessage = I18N(L"Place mouse pointer on the target posion and press ESC");
+	UpdateData(FALSE);
 }
 
 
@@ -216,11 +187,13 @@ BOOL CAutoClickerDlg::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
-		if (m_bGettingPosition)
+		if (pMsg->wParam == VK_ESCAPE)
 		{
-			if (pMsg->wParam == VK_ESCAPE)
+			if (m_bGettingPosition)
 			{
 				m_bGettingPosition = false;
+				m_strGetPositionMessage = L"";
+				UpdateData(FALSE);
 				POINT pos;
 				if (!GetCursorPos(&pos))
 				{
@@ -230,8 +203,13 @@ BOOL CAutoClickerDlg::PreTranslateMessage(MSG* pMsg)
 				m_strEditX = stdToString(pos.x).c_str();
 				m_strEditY = stdToString(pos.y).c_str();
 				UpdateData(FALSE);
-				return TRUE;
 			}
+			return TRUE;
+		}
+		if (pMsg->wParam == VK_RETURN)
+		{
+			// NOT CLOSE
+			return TRUE;
 		}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
@@ -270,6 +248,15 @@ LRESULT CAutoClickerDlg::OnWokerReady(WPARAM wParam, LPARAM lParam)
 
 void CAutoClickerDlg::ToggleWorker(bool bStart)
 {
+	struct stInvalidator {
+		CAutoClickerDlg* pThis_;
+		stInvalidator(CAutoClickerDlg* pThis) :pThis_(pThis) {}
+		~stInvalidator() {
+			// Makes backgroud refresh
+			pThis_->Invalidate();
+		}
+	} invalidator(this);
+
 	if(bStart)
 	{
 		UpdateData();
@@ -381,4 +368,20 @@ LRESULT CAutoClickerDlg::OnWokerError(WPARAM wParam, LPARAM lParam)
 
 	AppendLog(strLogLine);
 	return 0;
+}
+
+
+HBRUSH CAutoClickerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialogEx::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (nCtlColor == CTLCOLOR_DLG)
+	{
+		if (hClicker_ != nullptr)
+			return (HBRUSH)m_brBkgnd;
+		else
+			return hbr;
+	}
+
+	return hbr;
 }

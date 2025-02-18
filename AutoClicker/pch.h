@@ -12,6 +12,7 @@
 
 #include <string>
 #include <sstream>
+#include <memory>
 
 #include "../../lsMisc/stdosd/stdosd.h"
 #include "../../lsMisc/stdosd/blockedbool.h"
