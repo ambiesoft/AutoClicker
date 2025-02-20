@@ -18,6 +18,7 @@ class CAutoClickerDlg : public CDialogEx
 // Construction
 public:
 	CAutoClickerDlg(CWnd* pParent = nullptr);	// standard constructor
+	~CAutoClickerDlg();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -54,5 +55,7 @@ public:
 	afx_msg LRESULT OnWokerClicked(WPARAM wParam, LPARAM lParam);
 	CButton m_btnStart;
 	CEdit m_edtLog;
-	CString m_strGetPositionMessage;
+	CStatic m_lblGetPositionMessage;
+	CEdit m_editX;
+	CEdit m_editY;
 };

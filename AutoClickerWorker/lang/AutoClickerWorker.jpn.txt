@@ -1,0 +1,7 @@
+﻿"Parent process"="親プロセス"
+"Parent window"="親ウインドウ"
+"Show Help"="ヘルプを表示"
+"This process makes auto click"="自動クリックを実行"
+"X Position"="Xポジション"
+"Y Position"="Yポジション"
+

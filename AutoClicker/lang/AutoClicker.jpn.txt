@@ -1,0 +1,11 @@
+﻿"&Get Position"="座標を取得(&G)"
+"&Start"="スタート(&S)"
+"AutoClicker"="AutoClicker"
+"OK"="OK"
+"Place mouse pointer on the target posion and press ESC"="マウスポインターをターゲット位置まで移動してESCを押してください"
+
+"CLICKING NOW"="クリック中"
+"Clicked"="クリックしました"
+"Ended"="終了しました"
+"Started"="スタートしました"
+"&Stop"="ストップ(&S)"

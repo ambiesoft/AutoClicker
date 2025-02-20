@@ -2,12 +2,12 @@
 
 #include "resource.h"
 
-struct ClickerData
+struct ClickerThreadData
 {
 	long x_ = 0;
 	long y_ = 0;
 	HWND hParentWnd_ = nullptr;
-	ClickerData(LONG x,LONG y, HWND hParentWnd) : x_(x),y_(y),hParentWnd_(hParentWnd)
+	ClickerThreadData(LONG x,LONG y, HWND hParentWnd) : x_(x),y_(y),hParentWnd_(hParentWnd)
 	{}
 };
-void clickerMain(ClickerData* data);
+void clickerThreadMain(ClickerThreadData* data);

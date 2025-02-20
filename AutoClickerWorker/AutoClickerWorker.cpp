@@ -11,6 +11,7 @@
 #include "../../lsMisc/GetLastErrorString.h"
 #include "../../lsMisc/DebugMacro.h"
 #include "../../lsMisc/HighDPI.h"
+#include "../../lsMisc/I18N.h"
 
 #include "AutoClickerWorker.h"
 #include "thread.h"
@@ -47,6 +48,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ int       nCmdShow)
 {
     InitHighDPISupport();
+    i18nInitLangmap(nullptr, nullptr, APPNAME);
 
     CCommandLineParser parser(APPNAME, I18N(L"This process makes auto click"));
 
@@ -75,9 +77,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         ArgCount::ArgCount_One,
         &y,
         ArgEncodingFlags_Default,
-        I18N(L"X Position"));
+        I18N(L"Y Position"));
+
+    bool bHelp = false;
+    parser.AddOption({ L"-h", L"--help", L"/?" },
+        ArgCount::ArgCount_Zero,
+        &bHelp,
+        ArgEncodingFlags_Default,
+        I18N(L"Show Help"));
 
     parser.Parse();
+
+    if (bHelp)
+    {
+        MessageBox(nullptr,
+            parser.getHelpMessage().c_str(),
+            APPNAME L" v" APPVERSION,
+            MB_ICONINFORMATION);
+        return 0;
+    }
 
     CKernelHandle hParentProcess(OpenProcess(SYNCHRONIZE, FALSE, idProcess));
     if (!hParentProcess)
@@ -105,11 +123,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     DVERIFY(PostMessage(hParentWnd, WM_APP_WORKERREADY, 0, 0));
 
-    ThreadData threadData(hParentProcess);
-    std::thread thKillme(threadMain, &threadData);
+    DieMonitorThreadData threadData(hParentProcess);
+    std::thread thKillme(dieMonitorThreadMain, &threadData);
 
-    ClickerData clickerData(x, y,hParentWnd);
-    std::thread thClicker(clickerMain, &clickerData);
+    ClickerThreadData clickerData(x, y,hParentWnd);
+    std::thread thClicker(clickerThreadMain, &clickerData);
 
     MSG msg;
     while (GetMessage(&msg, nullptr, 0, 0))

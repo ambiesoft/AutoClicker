@@ -2,11 +2,11 @@
 
 #include "resource.h"
 
-class ThreadData
+class DieMonitorThreadData
 {
 	HANDLE hParentProcess_ = nullptr;
 public:
-	ThreadData(HANDLE hParentProcess) :
+	DieMonitorThreadData(HANDLE hParentProcess) :
 		hParentProcess_(hParentProcess) 
 	{
 
@@ -15,4 +15,4 @@ public:
 		return hParentProcess_;
 	}
 };
-void threadMain(ThreadData* threadData);
+void dieMonitorThreadMain(DieMonitorThreadData* threadData);

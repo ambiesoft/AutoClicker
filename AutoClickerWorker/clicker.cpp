@@ -20,7 +20,7 @@ static void ErrorTerminate(const wchar_t* pMessage)
 		MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), -1);
 }
-void clickerMain(ClickerData* data)
+void clickerThreadMain(ClickerThreadData* data)
 {
 	POINT origPos;
 	POINT targetPos;

@@ -25,7 +25,6 @@ CAutoClickerDlg::CAutoClickerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_AUTOCLICKER_DIALOG, pParent)
 	, m_strEditX(_T(""))
 	, m_strEditY(_T(""))
-	, m_strGetPositionMessage(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	try
@@ -49,6 +48,10 @@ CAutoClickerDlg::CAutoClickerDlg(CWnd* pParent /*=nullptr*/)
 	}
 	m_brBkgnd.CreateSolidBrush(RGB(145, 70, 42));
 }
+CAutoClickerDlg::~CAutoClickerDlg()
+{
+	Profile::FreeHandle(initialIni_);
+}
 
 void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -57,7 +60,9 @@ void CAutoClickerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_Y, m_strEditY);
 	DDX_Control(pDX, IDC_BUTTON_START_CLICKING, m_btnStart);
 	DDX_Control(pDX, IDC_EDIT_LOG, m_edtLog);
-	DDX_Text(pDX, IDC_STATIC_GETPOSITION_MESSAGE, m_strGetPositionMessage);
+	DDX_Control(pDX, IDC_STATIC_GETPOSITION_MESSAGE, m_lblGetPositionMessage);
+	DDX_Control(pDX, IDC_EDIT_X, m_editX);
+	DDX_Control(pDX, IDC_EDIT_Y, m_editY);
 }
 
 BEGIN_MESSAGE_MAP(CAutoClickerDlg, CDialogEx)
@@ -109,6 +114,13 @@ BOOL CAutoClickerDlg::OnInitDialog()
 
 	LoadWindowLocation(*this, initialIni_);
 	SetWindowText(AfxGetAppName());
+
+	HWND reigaiI18N[] = {
+		m_editX,
+		m_editY,
+	};
+	i18nChangeDialogText(*this, reigaiI18N, _countof(reigaiI18N));
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -165,10 +177,8 @@ HCURSOR CAutoClickerDlg::OnQueryDragIcon()
 
 void CAutoClickerDlg::OnBnClickedButtonGetPosition()
 {
-	m_bGettingPosition = true;
-	
-	m_strGetPositionMessage = I18N(L"Place mouse pointer on the target posion and press ESC");
-	UpdateData(FALSE);
+	m_bGettingPosition = !m_bGettingPosition;
+	m_lblGetPositionMessage.ShowWindow(m_bGettingPosition ? SW_SHOW : SW_HIDE);
 }
 
 
@@ -192,8 +202,7 @@ BOOL CAutoClickerDlg::PreTranslateMessage(MSG* pMsg)
 			if (m_bGettingPosition)
 			{
 				m_bGettingPosition = false;
-				m_strGetPositionMessage = L"";
-				UpdateData(FALSE);
+				m_lblGetPositionMessage.ShowWindow(SW_HIDE);
 				POINT pos;
 				if (!GetCursorPos(&pos))
 				{
@@ -233,7 +242,7 @@ void CAutoClickerDlg::OnDestroy()
 	ok &= Profile::WriteInt(SECTION_OPTION, KEY_MOUSE_X, x, ini);
 	ok &= Profile::WriteInt(SECTION_OPTION, KEY_MOUSE_Y, y, ini);
 	ok &= SaveWindowLocation(*this, ini);
-	if (!ok || !Profile::WriteAll(ini,std::wstring( (LPCWSTR)theApp.GetIniFile())))
+	if (!ok || !Profile::WriteAll(ini, std::wstring((LPCWSTR)theApp.GetIniFile())))
 	{
 		AfxMessageBox(I18N(L"Failed to write to ini file"));
 	}
@@ -283,7 +292,7 @@ void CAutoClickerDlg::ToggleWorker(bool bStart)
 			return;
 		}
 
-		m_btnStart.SetWindowText(L"Stop");
+		m_btnStart.SetWindowText(I18N(L"&Stop"));
 		SetWindowText(stdFormat(L"%s | %s", I18N(L"CLICKING NOW"), AfxGetAppName()).c_str());
 		m_edtLog.SetWindowText(L"");
 		AppendLog(I18N(L"Started"));

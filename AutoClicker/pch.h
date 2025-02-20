@@ -18,10 +18,9 @@
 #include "../../lsMisc/stdosd/blockedbool.h"
 #include "../../lsMisc/SaveWindowLocation.h"
 #include "../../lsMisc/OpenCommon.h"
+#include "../../lsMisc/I18N.h"
 
 #include "../../profile/cpp/Profile/include/ambiesoft.profile.h"
-
-#define I18N(s) s
 
 #define SECTION_OPTION "Option"
 #define KEY_MOUSE_X "MouseX"

@@ -1,115 +1,135 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
+    <Filter Include="01 Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
+    <Filter Include="03 Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="02 Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="02 Source Files\lsMisc">
+      <UniqueIdentifier>{45fa6bf2-4187-43c8-b5cf-5fb54d781bdc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01 Header Files\lsMisc">
+      <UniqueIdentifier>{9fa9639e-e351-495b-943e-8f3dd0e05a35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04 lang">
+      <UniqueIdentifier>{9786f4e8-1ca3-4dc8-9aed-7a5ba81902e9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AutoClickerWorker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\CreateSimpleWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\CommandLineParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\UrlEncode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\UTF16toUTF8.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\CHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\GetLastErrorString.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\common\common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\DebugMacro.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="thread.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="clicker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\lsMisc\HighDPI.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\lsMisc\BringWinTop.h">
-      <Filter>Header Files</Filter>
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\CHandle.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\CommandLineParser.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\CreateSimpleWindow.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\DebugMacro.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\GetLastErrorString.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\HighDPI.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\UrlEncode.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\UTF16toUTF8.h">
+      <Filter>01 Header Files\lsMisc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\lsMisc\I18N.h">
+      <Filter>01 Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoClickerWorker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\CreateSimpleWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\CommandLineParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\UrlEncode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\UTF16toUTF8.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\GetLastErrorString.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\DebugMacro.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>02 Source Files</Filter>
     </ClCompile>
     <ClCompile Include="thread.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>02 Source Files</Filter>
     </ClCompile>
     <ClCompile Include="clicker.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\lsMisc\HighDPI.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>02 Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\lsMisc\BringWinTop.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\CommandLineParser.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\CreateSimpleWindow.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\DebugMacro.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\GetLastErrorString.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\HighDPI.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\UrlEncode.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\UTF16toUTF8.cpp">
+      <Filter>02 Source Files\lsMisc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\lsMisc\I18N.cpp">
+      <Filter>02 Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="AutoClickerWorker.rc">
-      <Filter>Resource Files</Filter>
+      <Filter>03 Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>03 Resource Files</Filter>
     </Image>
     <Image Include="AutoClickerWorker.ico">
-      <Filter>Resource Files</Filter>
+      <Filter>03 Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="lang\AutoClickerWorker.jpn.txt">
+      <Filter>04 lang</Filter>
+    </Text>
   </ItemGroup>
 </Project>

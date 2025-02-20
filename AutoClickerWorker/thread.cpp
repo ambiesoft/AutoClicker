@@ -7,7 +7,7 @@
 
 // using namespace Ambiesoft;
 
-void threadMain(ThreadData* threadData)
+void dieMonitorThreadMain(DieMonitorThreadData* threadData)
 {
 	WaitForSingleObject(threadData->GetProcess(), INFINITE);
 	TerminateProcess(GetCurrentProcess(), -1);

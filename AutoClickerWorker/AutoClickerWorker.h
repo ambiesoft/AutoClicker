@@ -5,4 +5,4 @@
 #include "../common/common.h"
 
 #define APPNAME L"AutoClickerWorker"
-#define I18N(s) s
+#define APPVERSION L"0.0.1"
