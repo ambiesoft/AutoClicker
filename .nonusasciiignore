@@ -1,3 +1,6 @@
 *.rc
 *.ico
 *.rc2
+
+AutoClicker/lang/AutoClicker.jpn.txt
+AutoClickerWorker/lang/AutoClickerWorker.jpn.txt
